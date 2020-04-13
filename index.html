@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Management</title>
+    </head>
+    <body>
+        <div>
+            <input id="id" type="input">
+            <input id="name" type="input">
+            <button id="send" onclick="send()">Send</button>
+            <button id="show" onclick="show()">Show</button>
+        </div>
+        <br>
+        <table border="1">
+            <thead>
+                <tr>
+                    <td>id</td>
+                    <td>name</td>
+                    <td>action</td>
+                </tr>
+            </thead>
+            <tbody id="fetch-here">
+            </tbody>
+        </table>
+    </body>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        function show() {
+            axios.get('http://localhost:9081/users').then(res=>{
+                var data = "";
+                for (var row of res.data) {
+                    var info = "<tr><td>" + row.id + "</td><td>" + row.name + "</td><td><a href='#' onclick='remove(\"" + row.id + "\")'>delete</a></td></tr>";
+                    data+=info;
+                }
+                document.getElementById('fetch-here').innerHTML = data;
+            });
+        }
+
+        function send() {
+            axios.post('http://localhost:9081/users',{
+                id:     document.getElementById('id').value,
+                name:   document.getElementById('name').value,
+            }).then(function(){
+                show();
+            });
+            
+        }
+
+        function remove(id) {
+            axios.delete('http://localhost:9081/users/'+id).then(function(){
+                show();
+            });
+        }
+
+        show();
+        
+    </script>
+</html>
